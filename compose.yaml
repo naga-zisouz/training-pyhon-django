@@ -1,0 +1,15 @@
+services:
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_PATH: /data/db.sqlite3
+    volumes:
+      # コード変更を開発サーバーへ即時反映する。
+      - .:/app
+      # DBをホストのプロジェクト直下に作らない。
+      - django_data:/data
+
+volumes:
+  django_data:

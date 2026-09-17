@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}学習ToDo{% endblock %}
+
+{% block content %}
+  <header>
+    <p class="eyebrow">Python + Django Sample</p>
+    <h1>学習ToDo</h1>
+    <p>小さなタスクを登録して、ひとつずつ完了させよう。</p>
+  </header>
+
+  <form method="post" class="add-form">
+    {% csrf_token %}
+    {{ form.title }}
+    <button type="submit">追加</button>
+    {% if form.title.errors %}
+      <p class="error">{{ form.title.errors|striptags }}</p>
+    {% endif %}
+  </form>
+
+  <section aria-label="タスク一覧">
+    {% for task in tasks %}
+      <article class="task {% if task.is_done %}done{% endif %}">
+        <form method="post" action="{% url 'tasks:toggle' task.pk %}">
+          {% csrf_token %}
+          <button class="toggle" type="submit" aria-label="完了状態を変更">
+            {% if task.is_done %}✓{% else %}○{% endif %}
+          </button>
+        </form>
+        <div class="task-body">
+          <h2>{{ task.title }}</h2>
+          <small>{{ task.created_at|date:"Y年n月j日 H:i" }}</small>
+        </div>
+        <form method="post" action="{% url 'tasks:delete' task.pk %}">
+          {% csrf_token %}
+          <button class="delete" type="submit">削除</button>
+        </form>
+      </article>
+    {% empty %}
+      <p class="empty">まだタスクはありません。最初の1件を追加してみましょう。</p>
+    {% endfor %}
+  </section>
+{% endblock %}
